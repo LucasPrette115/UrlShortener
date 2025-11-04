@@ -1,0 +1,47 @@
+services:
+  back:
+    container_name: flask-backend
+    build:
+      context: ./backend 
+      dockerfile: Dockerfile
+    ports: 
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+    networks:
+      - url_shortener_net
+    
+  front:
+    container_name: react-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    command: ["npm", "run", "dev", "--", "--host"]
+    depends_on:
+      - back
+    networks:
+      - url_shortener_net
+  db:
+    container_name: mongo-database
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - url_shortener_net
+
+volumes:
+  mongo_data:
+
+networks:
+  url_shortener_net:
+    driver: bridge
+
