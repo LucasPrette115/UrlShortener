@@ -1,13 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FormEvent, ChangeEvent } from "react";
 import { useState } from "react";
 import styles from "./styles.module.css";
+import { useUrlShortener } from "../../hooks/useUrlShortener";
 
 export function UrlForm() {
     const [url, setUrl] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
+    const { shortenUrl } = useUrlShortener();
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>): void {
+    async function handleSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
         e.preventDefault();
-        console.log("URL to shorten:", url);
+        setLoading(true);
+        setError(null);
+
+        try{
+            const result = await shortenUrl(url);
+            setShortenedUrl(result.shortUrl);            
+        } catch (err: any) {
+            setError(err.message || "An error occurred");
+        }
+        finally{
+            setLoading(false);
+        }
     }
 
     function handleChange(e: ChangeEvent<HTMLInputElement>): void {
@@ -15,6 +32,7 @@ export function UrlForm() {
     }
 
     return (
+        <>
         <form onSubmit={handleSubmit} className={styles.formContainer}>
             <h1 className={styles.title}>URL Shortener</h1>
 
@@ -31,9 +49,22 @@ export function UrlForm() {
                 onChange={handleChange}
             />
 
-            <button type="submit" className={styles.submitButton}>
-                Shorten URL
+            <button disabled={loading} type="submit" className={styles.submitButton}>
+                {loading ? "Shortening..." : "Shorten URL"}
             </button>
         </form>
+
+        {error && <p className={styles.errorText}>Error: {error}</p>}
+
+        {shortenedUrl && (
+            <p>
+                Short URL: {" "}
+                <a href={shortenedUrl} target="_blank">
+                    {shortenedUrl}
+                </a>
+            </p>
+        )}
+        </>
+        
     );
 }
