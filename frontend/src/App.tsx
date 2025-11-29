@@ -1,12 +1,13 @@
 import './App.css'
-import { UrlForm } from './features/url-shortener/components/UrlForm'
+import { Container } from './components/Container'
+import { MainForm } from './views/MainForm'
 
 function App() {
 
   return (
-    
-      <UrlForm>
-    </UrlForm>
+    <Container>
+      <MainForm />
+    </Container>
   )
 }
 

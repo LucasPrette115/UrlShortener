@@ -8,7 +8,7 @@ export function useUrlShortener() {
     const { post } = useApi(baseUrl);
 
     return {
-        shortenUrl: (originalUrl: string) => 
-            post<{ shortUrl: string }>("shorten", { originalUrl }),
+        shortenUrl: (url: string) => 
+            post<{ short: string }>("shorten", { url }),
     }
 }

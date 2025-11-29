@@ -18,7 +18,7 @@ export function UrlForm() {
 
         try{
             const result = await shortenUrl(url);
-            setShortenedUrl(result.shortUrl);            
+            setShortenedUrl(result.short);            
         } catch (err: any) {
             setError(err.message || "An error occurred");
         }
@@ -54,16 +54,21 @@ export function UrlForm() {
             </button>
         </form>
 
-        {error && <p className={styles.errorText}>Error: {error}</p>}
+        {error && (
+            <p className={styles.errorText}>
+                ⚠️ Error: {error}
+            </p>
+            )}
 
-        {shortenedUrl && (
-            <p>
+            {shortenedUrl && (
+            <p className={styles.successText}>
                 Short URL: {" "}
                 <a href={shortenedUrl} target="_blank">
-                    {shortenedUrl}
+                {shortenedUrl}
                 </a>
             </p>
-        )}
+            )}
+
         </>
         
     );
